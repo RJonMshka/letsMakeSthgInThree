@@ -104,7 +104,28 @@ const renderer = new THREE.WebGLRenderer({
 renderer.setSize(sizes.width, sizes.height);
 
 // first render
-renderer.render(scene, camera) ;
+renderer.render(scene, camera);
 
 // the position of the camera is in x, y, z
 // z is forward-backward axis in 3JS
+
+// Time
+let time = Date.now();
+
+// Animations
+const tick = () => {
+
+    const currentTime = Date.now();
+    const deltaTime = currentTime - time;
+    time = currentTime;
+
+    // Update objects
+    mesh.rotation.x += 0.001 * deltaTime;
+
+    // Render
+    renderer.render(scene, camera);
+    
+    window.requestAnimationFrame(tick);
+};
+
+tick();
