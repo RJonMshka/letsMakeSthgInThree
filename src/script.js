@@ -1,8 +1,20 @@
 import './style.css'
 import * as THREE from "three";
 import { AxesHelper } from 'three';
+import gsap from 'gsap';
+import { OrbitControls } from "three/examples/jsm/controls/OrbitControls";
 
-
+/**
+ * Cursor
+ */
+const cursor = {
+    x: 0,
+    y: 0
+};
+window.addEventListener('mousemove', event => {
+    cursor.x = event.clientX / sizes.width - 0.5;
+    cursor.y = - (event.clientY / sizes.height - 0.5);
+});
 
 // Scene
 const scene = new THREE.Scene();
@@ -15,7 +27,7 @@ const material = new THREE.MeshBasicMaterial({ color: 0xff0000 });
 const mesh = new THREE.Mesh(geometry, material);
 
 // positioning
-mesh.position.set(0.7, -0.6, 1);
+mesh.position.set(0, 0, 0);
 
 // adding mesh to the scene
 scene.add(mesh);
@@ -32,15 +44,15 @@ scene.add(mesh);
 // mesh.scale.y = 0.5
 // mesh.scale.z = 0.5
 //  or
-mesh.scale.set(2, 0.5, 0.5);
+// mesh.scale.set(1, 1, 1);
 
 
 // Rotating - can be done with rotation or quaternion
 // to avoid gimbal locks - use reorder method - do it before changing the rotation
-mesh.rotation.reorder("YXZ");
+// mesh.rotation.reorder("YXZ");
 // rotation - type Euler  - in radians
-mesh.rotation.x = Math.PI * 0.25;
-mesh.rotation.y = Math.PI * 0.25;
+// mesh.rotation.x = Math.PI * 0.25;
+// mesh.rotation.y = Math.PI * 0.25;
 
 // to avoid issues with rotation we use quaternion
 // it represents rotation in more mathematical way
@@ -48,23 +60,23 @@ mesh.rotation.y = Math.PI * 0.25;
 
 
 // create a group
-const group = new THREE.Group();
-scene.add(group);
+// const group = new THREE.Group();
+// scene.add(group);
 
-const cube1 = new THREE.Mesh(
-    new THREE.BoxGeometry(1,1,1),
-    new THREE.MeshBasicMaterial( { color: 0x00ff00 } )
-);
+// const cube1 = new THREE.Mesh(
+//     new THREE.BoxGeometry(1,1,1),
+//     new THREE.MeshBasicMaterial( { color: 0x00ff00 } )
+// );
 
-const cube2 = new THREE.Mesh(
-    new THREE.BoxGeometry(1,1,1),
-    new THREE.MeshBasicMaterial( { color: 0x0000ff } )
-);
+// const cube2 = new THREE.Mesh(
+//     new THREE.BoxGeometry(1,1,1),
+//     new THREE.MeshBasicMaterial( { color: 0x0000ff } )
+// );
 
-cube2.position.x = 2
+// cube2.position.x = 2
 
-group.add(cube1);
-group.add(cube2);
+// group.add(cube1);
+// group.add(cube2);
 
 
 // Axes helper - takes unit, default = 1
@@ -77,13 +89,37 @@ const sizes = {
     height: 600
 };
 
+const apsectRatio = sizes.width / sizes.height;
+
 // Camera for point of view
 
 // default camera- perspective
 // 75 as FOV, second arg as the apsect ratio
-const camera = new THREE.PerspectiveCamera(75, sizes.width / sizes.height);
+const camera = new THREE.PerspectiveCamera(75, apsectRatio, 0.1, 100);
+
+// Orthographic camera
+// const camera = new THREE.OrthographicCamera(
+//     -1 * apsectRatio,
+//      1 * apsectRatio,
+//     1,
+//     -1, 
+//     0.1, 
+//     100
+// );
+
+// defining a renderer
+// Canvas DOM element
+const canvas = document.querySelector(".webgl");
+
 camera.position.z = 3;
+camera.lookAt(mesh.position);
 scene.add(camera);
+
+// Controls
+const controls = new OrbitControls(camera, canvas);
+controls.enableDamping = true;
+// controls.target.y = 2;
+// controls.update();
 
 // look at this - no need for complex calculations 
 camera.lookAt(mesh.position);
@@ -91,9 +127,7 @@ camera.lookAt(mesh.position);
 // distance between mesh and camera
 // mesh.position.distanceTo(camera.position)
 
-// defining a renderer
-// Canvas DOM element
-const canvas = document.querySelector(".webgl");
+
 
 // there are also, SVGRenderer, CSS Renderer to work with in Three.js
 const renderer = new THREE.WebGLRenderer({
@@ -109,18 +143,32 @@ renderer.render(scene, camera);
 // the position of the camera is in x, y, z
 // z is forward-backward axis in 3JS
 
-// Time
-let time = Date.now();
+// Clock
+const clock = new THREE.Clock();
+
+// gsap.to(mesh.position, {
+//     x: 2,
+//     duration: 1,
+//     delay: 1
+// })
 
 // Animations
 const tick = () => {
 
-    const currentTime = Date.now();
-    const deltaTime = currentTime - time;
-    time = currentTime;
+    // Clock
+    //const elapsedTime = clock.getElapsedTime();
 
     // Update objects
-    mesh.rotation.x += 0.001 * deltaTime;
+    // mesh.rotation.y = Math.sin(elapsedTime);
+    // mesh.rotation.x = Math.cos(elapsedTime);
+    // camera.lookAt(mesh.position);
+
+    // update the camera on cursor
+    // camera.position.x = Math.sin(cursor.x * Math.PI * 2) * 3;
+    // camera.position.z = Math.cos(cursor.x * Math.PI * 2) * 3;
+    // camera.position.y = cursor.y * 5;
+    // camera.lookAt(mesh.position);
+    controls.update();
 
     // Render
     renderer.render(scene, camera);
