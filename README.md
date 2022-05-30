@@ -50,6 +50,18 @@ more than 2 pixel ratio is just marketing gimmick
 window.devicePixelRatio
 
 
+# Geometries
+
+composed of vertices
+can be used for meshes and particles as well
+can store more data than the positions
+
+each vertex has position, uv coordinate, normal, everything i want (size, custom thing)
+
+Buffer geometries are more efficient and optimized but less developer friendly.
+
+
+
 
 
 

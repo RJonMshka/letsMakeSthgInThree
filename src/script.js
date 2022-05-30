@@ -20,9 +20,26 @@ window.addEventListener('mousemove', event => {
 const scene = new THREE.Scene();
 
 // Red cube
-const geometry = new THREE.BoxGeometry(1, 1, 1);
+//const geometry = new THREE.BoxGeometry(1, 1, 1);
+
+// making our own geometry
+const geometry = new THREE.BufferGeometry();
+
+// float32array which can be handled easily by behind the javascript code - computer
+const triangleCount = 500;
+const verticesPerTraingle = 3;
+const dataLengthPerVertex = 3;
+const positionsArray = new Float32Array(triangleCount * verticesPerTraingle * dataLengthPerVertex);
+
+for(let i = 0; i < triangleCount * verticesPerTraingle * dataLengthPerVertex; i++) {
+    positionsArray[i] = (Math.random() - 0.5) * 2;
+}
+
+const positionsAttribute = new THREE.BufferAttribute(positionsArray, dataLengthPerVertex);
+geometry.setAttribute('position', positionsAttribute);
+
 // Material
-const material = new THREE.MeshBasicMaterial({ color: 0xff0000 });
+const material = new THREE.MeshBasicMaterial({ color: 0xff0000, wireframe: true });
 // mesh
 const mesh = new THREE.Mesh(geometry, material);
 
